@@ -1,5 +1,5 @@
-const ROW = 4
-const COLUMN = 4
+const ROW = 3
+const COLUMN = ROW
 
 function Gameboard() {
     let board = []
@@ -16,23 +16,57 @@ function Gameboard() {
     checkWin = () => {
         let result = 'lose'
         // row check
-        for (let row = 1; row <= ROW; row++) {
+        for(let cell = 0; cell < ROW*COLUMN;cell++){
             let checkList = new Set
-            for (let column = 1; column <= COLUMN; column++){
-                checkList.add(board[(row-1)*COLUMN + (column-1)].getValue())
-            }
+            let x = cell
+            let col = -9999999
+            for(let i = 0; i < 3;i++){
 
-            if (checkList.size == 1) {win = true;break}
+                if(x >= ROW*COLUMN) {
+                    checkList.add('-1')
+                }
+                else {
+                    let newcol = ((x+1) % COLUMN) === 0 ? COLUMN : (x+1) % COLUMN;
+                    if(newcol>col){
+                        checkList.add(board[x].getValue())
+                        x++
+                    }
+                    else{checkList.add('-1')}
+                    col = newcol
+                }
+
+            }
+            if (checkList.size == 1){
+                console.log(checkList)
+                result = 'win'
+                }
         }
 
         // column check
-        for (let column = 1; column <= COLUMN; column++) {
+        for(let cell = 0; cell < ROW*COLUMN;cell++){
             let checkList = new Set
-            for (let row = 1; row <= ROW; row++){
-                checkList.add(board[(row-1)*COLUMN + (column-1)].getValue())
+            let x = cell
+            let col = ((x+1) % COLUMN) === 0 ? COLUMN : (x+1) % COLUMN;
+            for(let i = 0; i < 3;i++){
+
+                if(x >= ROW*COLUMN) {
+                    checkList.add('-1')
+                }
+                else {
+                    let newcol = ((x+1) % COLUMN) === 0 ? COLUMN : (x+1) % COLUMN;
+                    if(newcol==col){
+                        checkList.add(board[x].getValue())
+                        x+=COLUMN
+                    }
+                    else{checkList.add('-1')}
+                    col = newcol
+                }
+
             }
-            console.log(checkList)
-            if (checkList.size == 1) {win = true;break}
+            if (checkList.size == 1){
+                console.log(checkList)
+                result = 'win'
+                }
         }
 
         // diagonal check > r
