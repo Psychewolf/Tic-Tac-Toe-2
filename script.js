@@ -9,7 +9,11 @@ function Gameboard() {
         }
     }
 
-    return {board}
+    findCell = (row,column) => {
+        return board[(row-1)*COLUMN + (column-1)]
+    }
+
+    return {board,findCell}
 }
 
 function Cell(valuee,row,column){
@@ -21,7 +25,5 @@ function Cell(valuee,row,column){
     return {getValue,changeValue,getRow,getColumn}
 }
 gameboard = Gameboard()
-
-gameboard.board.forEach(element => {
-    console.log(element.getRow(),element.getColumn())
-});
+gameboard.findCell(2,2).changeValue(2)
+console.log(gameboard.findCell(2,2).getValue())
