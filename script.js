@@ -5,15 +5,15 @@ function Gameboard() {
     let board = []
     for (let row = 1; row <= ROW; row++) {
         for (let column = 1; column <= COLUMN; column++){
-            board.push({row,column})
+            board.push(Cell(0,row,column))
         }
     }
 
     return {board}
 }
 
-function Cell(value,row,column){
-    let value = value
+function Cell(valuee,row,column){
+    let value = valuee
     getValue = () => value
     changeValue = (x) => {value = x}
     getRow = () => row
@@ -22,4 +22,6 @@ function Cell(value,row,column){
 }
 gameboard = Gameboard()
 
-console.log(gameboard.board)
+gameboard.board.forEach(element => {
+    console.log(element.getRow(),element.getColumn())
+});
