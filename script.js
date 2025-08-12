@@ -15,7 +15,7 @@ function Gameboard() {
 
 
 
-    return {board,findCell,checkWin}
+    return {board,findCell}
 }
 
 function Cell(valuee,row,column){
@@ -29,9 +29,13 @@ function Cell(valuee,row,column){
 
 function GameController(){
     const gameboard = Gameboard()
+        
+
+
     const checkWin = () => {
             let board = gameboard.board
-            let result = 'lose'
+            let result = 'noresult'
+            let unfilled = false
 
             // row check
             for(let cell = 0; cell < ROW*COLUMN;cell++){
@@ -143,10 +147,24 @@ function GameController(){
                     return result
                     }
             }
+
+            for(let cell = 0; cell < ROW*COLUMN; cell++){
+                if(typeof(board[cell].getValue()) == 'string') {unfilled = true}
+            }
+
+            // draw check
+            if (unfilled == false){result = 'draw';return result}
+
+            // no result
+            return result
                 
 
     }
+
+    return {checkWin}
 }
 
 
 
+game = GameController()
+console.log(game.checkWin())
