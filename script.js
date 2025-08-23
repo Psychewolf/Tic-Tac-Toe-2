@@ -30,6 +30,8 @@ function Cell(valuee,row,column){
 
 function GameController(){
     this.currentPlayer = "player1"
+    this.lastPlayedBoard = document.querySelector("button")
+    this.move = 0
 
     document.querySelectorAll(".gameboard").forEach(element => {
         let canvas = document.getElementById(`${element.id}`)
@@ -163,17 +165,18 @@ function GameController(){
         canvas.style.fontSize = `calc(${canvas.offsetWidth}px/${ROW}/2)`
         const gameboard = Gameboard()
         DisplayController(canvas, gameboard.board, 'player1')
-        let lastPlayedBoard = document.querySelector("#board0")
-        
         canvas.addEventListener("click", (e) => {
-            if (gameboard.board[e.target.id].getValue() == "player1" || gameboard.board[e.target.id].getValue() == "player2") { return} 
+            // if not first move
+            if (this.move!=0 && !(e.target.parentElement.classList.contains("focus"))) {return}
+            this.move+=1
+            if (gameboard.board[e.target.id].getValue() == "player1" || gameboard.board[e.target.id].getValue() == "player2") {return} 
             this.currentPlayer = this.currentPlayer == "player1" ? "player2" : "player1"
             gameboard.board[e.target.id].changeValue(this.currentPlayer)
 
             // next board highlight
-            lastPlayedBoard.style.backgroundColor = "black"
-            lastPlayedBoard = document.querySelector("#board"+e.target.id)
-            lastPlayedBoard.style.backgroundColor = "red"
+            this.lastPlayedBoard.classList.toggle("focus")
+            this.lastPlayedBoard = document.querySelector("#board"+e.target.id)
+            this.lastPlayedBoard.classList.toggle("focus")
 
 
             if (checkWin(gameboard).result == "win") {
