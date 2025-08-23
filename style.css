@@ -1,0 +1,35 @@
+* > {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+.gameboard  {
+    height: 700px;
+    width: 700px;
+    background-color: black;
+    display: grid;
+    grid-template: repeat(4,1fr)/repeat(4,1fr);
+    gap: 5px;
+
+}
+.cell {
+    background-color: beige;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    padding: 30px;
+    margin: 10px;
+    font-size: xx-large;
+    background-color: beige;
+    border-radius: 20px;
+    box-shadow: -5px 10px black;
+}

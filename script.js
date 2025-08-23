@@ -24,14 +24,29 @@ function Cell(valuee,row,column){
     const changeValue = (x) => {value = x}
     const getRow = () => row
     const getColumn = () => column
-    return {getValue,changeValue,getRow,getColumn}
+    const content = () => value == "player1" ? "X" : value == "player2" ? "O" : ""
+    return {getValue,changeValue,getRow,getColumn,content}
 }
 
 function GameController(){
+    let currentPlayer = "player1"
+    let canvas = document.querySelector(".gameboard")
+    canvas.style.gridTemplate = `repeat(${ROW},1fr)/repeat(${ROW},1fr)`;
+    canvas.style.fontSize = `calc(${canvas.offsetWidth}px/${ROW}/2)`
     const gameboard = Gameboard()
-        
+    DisplayController(canvas,gameboard.board,'player1')
 
 
+    canvas.addEventListener("click",(e)=>{
+        if(gameboard.board[e.target.id].getValue() == "player1" || gameboard.board[e.target.id].getValue() == "player2"){return}
+        currentPlayer = currentPlayer=="player1" ? "player2":"player1"
+        gameboard.board[e.target.id].changeValue(currentPlayer)
+        if (checkWin()=="win"){
+            canvas.style.backgroundColor = "red"    
+        }
+    })
+    canvas.addEventListener("click", () => {DisplayController(canvas,gameboard.board)})
+    
     const checkWin = () => {
             let board = gameboard.board
             let result = 'noresult'
@@ -59,7 +74,7 @@ function GameController(){
 
                 }
                 if (checkList.size == 1){
-                    console.log(checkList)
+
                     result = 'win'
                     return result
                     }
@@ -87,7 +102,6 @@ function GameController(){
 
                 }
                 if (checkList.size == 1){
-                    console.log(checkList)
                     result = 'win'
                     return result
                     }
@@ -115,12 +129,11 @@ function GameController(){
 
                 }
                 if (checkList.size == 1){
-                    console.log(checkList)
+
                     result = 'win'
                     return result
                     }
             }
-            console.log('-------------')
             // diagonal check > l
             for(let cell = 0; cell < ROW*COLUMN;cell++){
                 let checkList = new Set
@@ -142,7 +155,6 @@ function GameController(){
 
                 }
                 if (checkList.size == 1){
-                    console.log(checkList)
                     result = 'win'
                     return result
                     }
@@ -154,17 +166,24 @@ function GameController(){
 
             // draw check
             if (unfilled == false){result = 'draw';return result}
-
             // no result
             return result
-                
 
     }
 
     return {checkWin}
 }
 
-
+function DisplayController(canvas,board){
+    canvas.innerHTML = ''
+    for (let index = 0; index < board.length; index++) {
+            let cell = document.createElement("div")
+            cell.classList.add("cell")
+            cell.id = `${index}`
+            cell.textContent = board[index].content()
+            canvas.append(cell)
+    }
+}
 
 game = GameController()
-console.log(game.checkWin())
+
