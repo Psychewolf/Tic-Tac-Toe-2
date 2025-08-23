@@ -33,12 +33,10 @@ function GameController(){
 
     document.querySelectorAll(".gameboard").forEach(element => {
         let canvas = document.getElementById(`${element.id}`)
-        console.log(canvas)
         gameStart(canvas)
     });
 
     const checkWin = (gameboard) => {
-            console.log(gameboard)
             let board = gameboard.board
             let result = 'noresult'
             let unfilled = false
@@ -146,7 +144,6 @@ function GameController(){
                 }
                 if (checkList.size == 1){
                     result = 'win'
-                    console.log(checkList.values().next().value)
                     return {result:"win",who:checkList.values().next().value}
                     }
             }
@@ -166,12 +163,19 @@ function GameController(){
         canvas.style.fontSize = `calc(${canvas.offsetWidth}px/${ROW}/2)`
         const gameboard = Gameboard()
         DisplayController(canvas, gameboard.board, 'player1')
-
-
+        let lastPlayedBoard = document.querySelector("#board0")
+        
         canvas.addEventListener("click", (e) => {
             if (gameboard.board[e.target.id].getValue() == "player1" || gameboard.board[e.target.id].getValue() == "player2") { return} 
             this.currentPlayer = this.currentPlayer == "player1" ? "player2" : "player1"
             gameboard.board[e.target.id].changeValue(this.currentPlayer)
+
+            // next board highlight
+            lastPlayedBoard.style.backgroundColor = "black"
+            lastPlayedBoard = document.querySelector("#board"+e.target.id)
+            lastPlayedBoard.style.backgroundColor = "red"
+
+
             if (checkWin(gameboard).result == "win") {
             if(checkWin(gameboard).who == "player1") canvas.style.backgroundColor = "red"    
             if(checkWin(gameboard).who == "player2") canvas.style.backgroundColor = "blue"   
@@ -191,7 +195,7 @@ function DisplayController(canvas,board,lastplayed){
             cell.textContent = board[index].content()
             canvas.append(cell)
     }
-}
-
+    }
+    
 game = GameController()
 
