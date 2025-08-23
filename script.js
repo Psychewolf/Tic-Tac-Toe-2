@@ -29,25 +29,16 @@ function Cell(valuee,row,column){
 }
 
 function GameController(){
-    let currentPlayer = "player1"
-    let canvas = document.querySelector(".gameboard")
-    canvas.style.gridTemplate = `repeat(${ROW},1fr)/repeat(${ROW},1fr)`;
-    canvas.style.fontSize = `calc(${canvas.offsetWidth}px/${ROW}/2)`
-    const gameboard = Gameboard()
-    DisplayController(canvas,gameboard.board,'player1')
+    this.currentPlayer = "player1"
 
+    document.querySelectorAll(".gameboard").forEach(element => {
+        let canvas = document.getElementById(`${element.id}`)
+        console.log(canvas)
+        gameStart(canvas)
+    });
 
-    canvas.addEventListener("click",(e)=>{
-        if(gameboard.board[e.target.id].getValue() == "player1" || gameboard.board[e.target.id].getValue() == "player2"){return}
-        currentPlayer = currentPlayer=="player1" ? "player2":"player1"
-        gameboard.board[e.target.id].changeValue(currentPlayer)
-        if (checkWin()=="win"){
-            canvas.style.backgroundColor = "red"    
-        }
-    })
-    canvas.addEventListener("click", () => {DisplayController(canvas,gameboard.board)})
-    
-    const checkWin = () => {
+    const checkWin = (gameboard) => {
+            console.log(gameboard)
             let board = gameboard.board
             let result = 'noresult'
             let unfilled = false
@@ -76,7 +67,7 @@ function GameController(){
                 if (checkList.size == 1){
 
                     result = 'win'
-                    return result
+                    return {result:"win",who:checkList.values().next().value}
                     }
             }
 
@@ -103,7 +94,7 @@ function GameController(){
                 }
                 if (checkList.size == 1){
                     result = 'win'
-                    return result
+                    return {result:"win",who:checkList.values().next().value}
                     }
             }
 
@@ -129,9 +120,8 @@ function GameController(){
 
                 }
                 if (checkList.size == 1){
-
                     result = 'win'
-                    return result
+                    return {result:"win",who:checkList.values().next().value}
                     }
             }
             // diagonal check > l
@@ -156,7 +146,8 @@ function GameController(){
                 }
                 if (checkList.size == 1){
                     result = 'win'
-                    return result
+                    console.log(checkList.values().next().value)
+                    return {result:"win",who:checkList.values().next().value}
                     }
             }
 
@@ -165,16 +156,33 @@ function GameController(){
             }
 
             // draw check
-            if (unfilled == false){result = 'draw';return result}
+            if (unfilled == false){result = 'draw';return {result:"draw",who:"none"}}
             // no result
-            return result
+            return {result:"noresult",who:"none"}
 
     }
+    function gameStart(canvas) {
+        canvas.style.gridTemplate = `repeat(${ROW},1fr)/repeat(${ROW},1fr)`
+        canvas.style.fontSize = `calc(${canvas.offsetWidth}px/${ROW}/2)`
+        const gameboard = Gameboard()
+        DisplayController(canvas, gameboard.board, 'player1')
 
-    return {checkWin}
+
+        canvas.addEventListener("click", (e) => {
+            if (gameboard.board[e.target.id].getValue() == "player1" || gameboard.board[e.target.id].getValue() == "player2") { return} 
+            this.currentPlayer = this.currentPlayer == "player1" ? "player2" : "player1"
+            gameboard.board[e.target.id].changeValue(this.currentPlayer)
+            if (checkWin(gameboard).result == "win") {
+            if(checkWin(gameboard).who == "player1") canvas.style.backgroundColor = "red"    
+            if(checkWin(gameboard).who == "player2") canvas.style.backgroundColor = "blue"   
+            }
+        })
+        canvas.addEventListener("click", () => { DisplayController(canvas, gameboard.board) })
+    }
+    return {checkWin, gameStart}
 }
 
-function DisplayController(canvas,board){
+function DisplayController(canvas,board,lastplayed){
     canvas.innerHTML = ''
     for (let index = 0; index < board.length; index++) {
             let cell = document.createElement("div")

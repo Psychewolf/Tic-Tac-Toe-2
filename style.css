@@ -8,14 +8,25 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    background-color: beige;
 }
-.gameboard  {
-    height: 700px;
-    width: 700px;
+.mainboard  {
+    height: 1000px;
+    width: 1000px;
     background-color: black;
     display: grid;
-    grid-template: repeat(4,1fr)/repeat(4,1fr);
+    grid-template: repeat(3,1fr)/repeat(3,1fr);
     gap: 5px;
+    padding: 5px;
+
+}
+.gameboard  {
+    height: 95%;
+    width: 95%;
+    background-color: black;
+    display: grid;
+    gap: 5px;
+    margin: 5px;
 
 }
 .cell {
