@@ -1,6 +1,13 @@
 const ROW = 3
+
 const COLUMN = ROW
 const WIN_CONDITION = 3
+
+function ButtonFunction(){
+    let button = document.querySelector(".button")
+    button.onclick(() => {})
+}
+
 function Gameboard() {
     let board = []
     for (let row = 1; row <= ROW; row++) {
@@ -32,6 +39,14 @@ function GameController(){
     this.currentPlayer = "player1"
     this.lastPlayedBoard = document.querySelector("button")
     this.move = 0
+
+    this.overlay = document.querySelector('.overlay-grid')
+    let overlayController = OverlayController(this.overlay)
+    console.log(overlayController)
+
+    overlayController.createOverlay()
+    
+    document.querySelector(".start").onclick = e => (overlayController.switchView(40))
 
     document.querySelectorAll(".gameboard").forEach(element => {
         let canvas = document.getElementById(`${element.id}`)
@@ -165,7 +180,10 @@ function GameController(){
         canvas.style.fontSize = `calc(${canvas.offsetWidth}px/${ROW}/2)`
         canvas.style.color = "rgba(255, 255, 255, 1)"
         const gameboard = Gameboard()
+
         DisplayController(canvas, gameboard.board, 'player1')
+
+
         canvas.addEventListener("click", (e) => {
             // if not first move
             if (this.move!=0 && !(e.target.parentElement.classList.contains("focus"))) {return}
@@ -200,6 +218,39 @@ function DisplayController(canvas,board,lastplayed){
             canvas.append(cell)
     }
     }
-    
+function OverlayController(overlay){
+    const createOverlay = (overlay = this.overlay) => {
+        overlay.dataset.condition = "on"
+        for (let index = 0; index < ROW*COLUMN*ROW*COLUMN; index++) {
+                console.log(index)
+                let cell = document.createElement("div")
+                cell.classList.add("overlay-cell")
+                cell.id = `${index}`
+                cell.style.opacity = '1'
+                cell.onclick = e => switchView(index,overlay,e.target);
+                overlay.append(cell)
+        }
+    }
+     
+    const switchView = (index,parent,target) => {
+        anime({
+            targets: ".overlay-cell",
+            opacity: this.overlay.dataset.condition=="on" ? 0:1,
+            delay: anime.stagger(100, {
+                grid: [ROW*3,ROW*3],
+                from: index
+            })
+
+        })
+        this.overlay.style.pointerEvents = "none"
+        console.log(this.overlay.dataset.condition)
+        if (this.overlay.dataset.condition == "off"){this.overlay.dataset.condition = "on"}
+        else{this.overlay.dataset.condition = "off"}
+        }
+    const switchClickable = () => {
+        document.querySelector(".overlay-grid").style.pointerEvents = "auto"
+    }
+    return {createOverlay, switchView,switchClickable}
+}
 game = GameController()
 
