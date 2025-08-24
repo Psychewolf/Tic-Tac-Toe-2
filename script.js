@@ -163,6 +163,7 @@ function GameController(){
     function gameStart(canvas) {
         canvas.style.gridTemplate = `repeat(${ROW},1fr)/repeat(${ROW},1fr)`
         canvas.style.fontSize = `calc(${canvas.offsetWidth}px/${ROW}/2)`
+        canvas.style.color = "rgba(255, 255, 255, 1)"
         const gameboard = Gameboard()
         DisplayController(canvas, gameboard.board, 'player1')
         canvas.addEventListener("click", (e) => {

@@ -8,32 +8,48 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background-color: beige;
+    background-color: rgb(20, 20, 20);
 }
+
+
+
 .mainboard  {
     height: 1000px;
     width: 1000px;
-    background-color: black;
     display: grid;
     grid-template: repeat(3,1fr)/repeat(3,1fr);
-    gap: 5px;
-    padding: 5px;
+    animation: background-pan 5s linear infinite;
+    background: linear-gradient(
+        to right,
+        purple,
+        blue,
+        purple
+    );
+    background-size: 200%;
+}
+@keyframes background-pan {
+    from {
+        background-position: 0% center;
+    }
+    to{
+        background-position: -200% center;
+    }
 
 }
 .gameboard  {
     height: 95%;
     width: 95%;
-    background-color: black;
     display: grid;
-    gap: 5px;
-    margin: 5px;
+    gap: 0.1vw;
+    padding: 10px;
 
 }
 .cell {
-    background-color: beige;
+    background-color: rgb(20, 20, 20);
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
 button {
@@ -46,5 +62,9 @@ button {
 }
 
 .focus {
-    background-color: red;
+  background-image: linear-gradient(white);
+  background-size: 94% 94%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
 }
