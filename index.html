@@ -11,21 +11,27 @@
     </head>
 
     <body>
-        <h1> Tic Tac Toy </h1>
+        <h1> Tic Tac Toe 2 </h1>
         <div class="mainboard">
-            <div class="gameboard" id="board0"></div>
-            <div class="gameboard" id="board1"></div>
-            <div class="gameboard" id="board2"></div>
-            <div class="gameboard" id="board3"></div>
-            <div class="gameboard" id="board4"></div>
-            <div class="gameboard" id="board5"></div>
-            <div class="gameboard" id="board6"></div>
-            <div class="gameboard" id="board7"></div>
-            <div class="gameboard" id="board8"></div>
             <div class="overlay-grid" id="overlay"></div>
+            <div class="overlay-text">
+                <svg width="0" height="0" style="position:absolute;pointer-events:none;opacity:0;">
+                    <filter id="distortFilter">
+                        <feTurbulence id="turb" baseFrequency="0.02 0.05" numOctaves="2" seed="5" result="noise" />
+                        <feDisplacementMap id="disp" in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R"
+                            yChannelSelector="G" />
+                    </filter>
+                </svg>
+                <h1 id="menuheading">Click anywhere to start the game...</h1>
+                <h2 id="menusubheading"></h2>
+                <div class="buttons">
+                    <button id="button1">Player 1 (O)</button>
+                    <button id="button2">Player 2 (X)</button>
+                </div>
+            </div>
         </div>
 
-        <button class="start"> Start </button>
+        <button class="start"> Reset </button>
     </body>
 
 </html>

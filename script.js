@@ -19,9 +19,6 @@ function Gameboard() {
     const findCell = (row,column) => {
         return board[(row-1)*COLUMN + (column-1)]
     }
-
-
-
     return {board,findCell}
 }
 
@@ -35,24 +32,19 @@ function Cell(valuee,row,column){
     return {getValue,changeValue,getRow,getColumn,content}
 }
 
-function GameController(){
-    this.currentPlayer = "player1"
+function GameController(currentplayer){
+
+
+    this.currentPlayer = currentplayer
     this.lastPlayedBoard = document.querySelector("button")
     this.move = 0
-
-    this.overlay = document.querySelector('.overlay-grid')
-    let overlayController = OverlayController(this.overlay)
-    console.log(overlayController)
-
-    overlayController.createOverlay()
-    
-    document.querySelector(".start").onclick = e => (overlayController.switchView(40))
-
-    document.querySelectorAll(".gameboard").forEach(element => {
-        let canvas = document.getElementById(`${element.id}`)
-        gameStart(canvas)
-    });
-
+    function initiate(){
+        generateBoards()
+        document.querySelectorAll(".gameboard").forEach(element => {
+            let canvas = document.getElementById(`${element.id}`)
+            gameStart(canvas)
+        });
+    }
     const checkWin = (gameboard) => {
             let board = gameboard.board
             let result = 'noresult'
@@ -197,15 +189,30 @@ function GameController(){
             this.lastPlayedBoard = document.querySelector("#board"+e.target.id)
             this.lastPlayedBoard.classList.toggle("focus")
 
-
+            console.log(checkWin(gameboard))
             if (checkWin(gameboard).result == "win") {
-            if(checkWin(gameboard).who == "player1") canvas.style.backgroundColor = "red"    
-            if(checkWin(gameboard).who == "player2") canvas.style.backgroundColor = "blue"   
+                if(checkWin(gameboard).who == "player1") canvas.style.backgroundColor = "red"    
+                if(checkWin(gameboard).who == "player2") canvas.style.backgroundColor = "blue"   
             }
         })
         canvas.addEventListener("click", () => { DisplayController(canvas, gameboard.board) })
     }
-    return {checkWin, gameStart}
+    function generateBoards() {
+        this.mainboard = document.querySelector(".mainboard")
+        this.mainboard.style.gridTemplate = `repeat(${ROW},1fr)/repeat(${ROW},1fr)`
+        this.overlay = document.querySelector('.overlay-grid')
+        this.overlay.style.gridTemplate = `repeat(${ROW*ROW},1fr)/repeat(${ROW*ROW},1fr)`
+        this.menu = document.querySelector(".overlay-text")
+
+        
+        for(let i = 0; i < ROW*COLUMN; i++) {
+            let boarddiv = document.createElement("div")
+            boarddiv.classList.add("gameboard")
+            boarddiv.id = `board${i}`
+            this.mainboard.append(boarddiv)
+        }
+    }
+    return {initiate,checkWin, gameStart}
 }
 
 function DisplayController(canvas,board,lastplayed){
@@ -237,11 +244,20 @@ function OverlayController(overlay){
             targets: ".overlay-cell",
             opacity: this.overlay.dataset.condition=="on" ? 0:1,
             delay: anime.stagger(100, {
-                grid: [ROW*3,ROW*3],
+                grid: [ROW*ROW,ROW*ROW],
                 from: index
             })
-
         })
+        anime({
+            targets: ".overlay-text",
+            opacity: this.overlay.dataset.condition=="on" ? 0:1,
+            delay: anime.stagger(100, {
+                grid: [ROW*ROW,ROW*ROW],
+                from: 50
+            })
+        })
+
+        
         this.overlay.style.pointerEvents = "none"
         console.log(this.overlay.dataset.condition)
         if (this.overlay.dataset.condition == "off"){this.overlay.dataset.condition = "on"}
@@ -252,5 +268,56 @@ function OverlayController(overlay){
     }
     return {createOverlay, switchView,switchClickable}
 }
-game = GameController()
+function Gamelogic(){
 
+    game = GameController('player1')
+    menuState("start")
+    menu = document.querySelector(".overlay-text")
+    menuheading = document.querySelector("#menuheading")
+    menusubheading = document.querySelector("#menusubheading")
+    button1 = document.querySelector("#button1")
+    button2 = document.querySelector("#button2")
+ 
+    overlayController = OverlayController(game.overlay)
+    overlayController.createOverlay()
+    document.querySelector(".start").onclick = e => (this.overlayController.switchView((ROW*ROW*ROW*ROW)/2))
+    
+    game.initiate()
+    
+    function menuState(current_state){
+        switch (current_state){
+            case "start":
+                menusubheading.textContent="Who goes first?"
+                button1.onclick = (() => {GameController('player1'); menusubheading.textContent='player 1 goes first'})
+                button2.onclick = (() => {GameController('player2'); menusubheading.textContent='player 2 goes first'})
+
+        
+
+}
+
+    }
+
+}
+
+
+Gamelogic()
+
+
+const turb = document.getElementById('turb')
+const disp = document.getElementById('disp')
+
+// subtle pulsing distortion using anime's loop
+anime({
+  duration: 3600,
+  easing: 'easeInOutSine',
+  direction: 'alternate',
+  loop: true,
+  update: (anim) => {
+    // anim.progress or currentTime -> compute smooth values
+    const t = 0.012 + 0.028 * Math.sin((anim.currentTime / anim.duration) * Math.PI * 2)
+    turb.setAttribute('baseFrequency', `${t.toFixed(4)} ${ (t*1.8).toFixed(4) }`)
+
+    const s = 6 + 16 * (0.5 + 0.5 * Math.sin((anim.currentTime / anim.duration) * Math.PI * 2))
+    disp.setAttribute('scale', s.toFixed(1))
+  }
+})
