@@ -17,8 +17,8 @@ body > h1 {
 
 .mainboard  {
     position: relative;
-    height: 1000px;
-    width: 1000px;
+    height: 950px;
+    width: 950px;
     display: grid;
     animation: background-pan 5s linear infinite;
     background: linear-gradient(
@@ -114,12 +114,12 @@ button {
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    --grid-size: 5vw;
+    --grid-size: calc(940px/9);
     background-image:
         linear-gradient(rgba(255, 255, 255, 0.5) 0.1vw, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0.1vw, transparent 1px);
     background-size: var(--grid-size) var(--grid-size), var(--grid-size) var(--grid-size);
-    background-position: -10px -10px, -10px -10px;
+    background-position: 0px 0px 0px 0px;
     mix-blend-mode: luminosity;
     opacity: 1;
     transform-origin: center;
