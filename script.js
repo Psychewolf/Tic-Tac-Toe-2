@@ -187,13 +187,24 @@ function GameController(currentplayer){
 
             // next board highlight
             this.lastPlayedBoard.classList.toggle("focus")
+            if (gameboard.board.some(e => e.content() == "")){
+                console.log("jaber")
+            }
+            else{
+                this.mainboard.dispatchEvent(new CustomEvent('gameResult:draw',{detail:{who:checkWin(gameboard).who,where:e.target.parentElement}}))
+            }
             this.lastPlayedBoard = document.querySelector("#board"+e.target.id)
             this.lastPlayedBoard.classList.toggle("focus")
+
 
             console.log(checkWin(gameboard))
             if (checkWin(gameboard).result == "win") {
                 this.lastPlayedBoard.classList.toggle("focus")
                 this.mainboard.dispatchEvent(new CustomEvent('gameResult:won',{detail:{who:checkWin(gameboard).who,where:e.target.parentElement}}))
+            }
+            if (checkWin(gameboard).result == "draw") {
+                this.lastPlayedBoard.classList.toggle("focus")
+                this.mainboard.dispatchEvent(new CustomEvent('gameResult:draw',{detail:{who:checkWin(gameboard).who,where:e.target.parentElement}}))
             }
         })
         canvas.addEventListener("click", () => { DisplayController(canvas, gameboard.board) })
@@ -299,8 +310,11 @@ function Gamelogic(){
     mainboard.addEventListener('gameResult:won', (e) => {
         menuState("won",who=e.detail.who,where=e.detail.where)
     })
+    mainboard.addEventListener('gameResult:draw', (e) => {
+        menuState("draw",who=e.detail.who,where=e.detail.where)
+    })
     function menuState(current_state,who,where){
-
+            document.querySelector(".start").style.visibility
             if(where)where.style.backgroundColor = ''
             if(where)where.style.color = ""
             menuheading.textContent = `Click anywhere to start the game...`
@@ -309,7 +323,7 @@ function Gamelogic(){
             button2.style.visibility='visible'
         switch (current_state){
             case "start":
-                document.querySelector(".start").style.pointerEvents = "none"
+                document.querySelector(".start").style.visibility='hidden'
                 menu.style.pointerEvents='all'              
                 menusubheading.textContent="Who goes first?"
                 button1.onclick = (() => {GameController('player1'); menusubheading.textContent='player 1 goes first';menu.style.pointerEvents='none';menuheading.style.opacity="1"})
@@ -317,7 +331,8 @@ function Gamelogic(){
                 overlayClick.onclick = (() => {overlayClick.style.pointerEvents='none';overlayClick.onclick=''})
                 break
             case "won":
-                document.querySelector(".start").style.pointerEvents = "all"
+                document.querySelector(".start").style.visibility='visible'
+                document.querySelector(".start").textContent = "New Game"
                 overlayClick.style.pointerEvents = "all"
                 menu.style.pointerEvents='none'
                 where.style.backgroundColor = "white"
@@ -327,6 +342,20 @@ function Gamelogic(){
                 button1.style.visibility='hidden'
                 button2.style.visibility='hidden'
                 break
+            case "draw":
+                document.querySelector(".start").style.visibility='visible'
+                document.querySelector(".start").textContent = "Start New Game"
+                overlayClick.style.pointerEvents = "all"
+                menu.style.pointerEvents='none'
+                where.style.backgroundColor = "yellow"
+                where.style.color = "white"
+                menuheading.textContent = `The game has been drawn...`
+                menusubheading.textContent = "play again?"
+                button1.style.visibility='hidden'
+                button2.style.visibility='hidden'
+
+                break
+
         }
 
     }
