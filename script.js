@@ -34,7 +34,7 @@ function Cell(valuee,row,column){
 
 function GameController(currentplayer){
 
-
+    this.mainboard = document.querySelector(".mainboard")
     this.currentPlayer = currentplayer
     this.lastPlayedBoard = document.querySelector("button")
     this.move = 0
@@ -181,8 +181,9 @@ function GameController(currentplayer){
             if (this.move!=0 && !(e.target.parentElement.classList.contains("focus"))) {return}
             this.move+=1
             if (gameboard.board[e.target.id].getValue() == "player1" || gameboard.board[e.target.id].getValue() == "player2") {return} 
+            gameboard.board[e.target.id].changeValue(this.currentPlayer)            
             this.currentPlayer = this.currentPlayer == "player1" ? "player2" : "player1"
-            gameboard.board[e.target.id].changeValue(this.currentPlayer)
+            
 
             // next board highlight
             this.lastPlayedBoard.classList.toggle("focus")
@@ -191,14 +192,18 @@ function GameController(currentplayer){
 
             console.log(checkWin(gameboard))
             if (checkWin(gameboard).result == "win") {
-                if(checkWin(gameboard).who == "player1") canvas.style.backgroundColor = "red"    
-                if(checkWin(gameboard).who == "player2") canvas.style.backgroundColor = "blue"   
+                this.lastPlayedBoard.classList.toggle("focus")
+                this.mainboard.dispatchEvent(new CustomEvent('gameResult:won',{detail:{who:checkWin(gameboard).who,where:e.target.parentElement}}))
             }
         })
         canvas.addEventListener("click", () => { DisplayController(canvas, gameboard.board) })
     }
     function generateBoards() {
         this.mainboard = document.querySelector(".mainboard")
+        const divsToRemove = document.querySelectorAll('div.gameboard');
+            divsToRemove.forEach(div => {
+            div.remove();
+            });
         this.mainboard.style.gridTemplate = `repeat(${ROW},1fr)/repeat(${ROW},1fr)`
         this.overlay = document.querySelector('.overlay-grid')
         this.overlay.style.gridTemplate = `repeat(${ROW*ROW},1fr)/repeat(${ROW*ROW},1fr)`
@@ -226,6 +231,7 @@ function DisplayController(canvas,board,lastplayed){
     }
     }
 function OverlayController(overlay){
+    let menu = document.querySelector(".overlay-text")
     const createOverlay = (overlay = this.overlay) => {
         overlay.dataset.condition = "on"
         for (let index = 0; index < ROW*COLUMN*ROW*COLUMN; index++) {
@@ -257,8 +263,7 @@ function OverlayController(overlay){
             })
         })
 
-        
-        this.overlay.style.pointerEvents = "none"
+    
         console.log(this.overlay.dataset.condition)
         if (this.overlay.dataset.condition == "off"){this.overlay.dataset.condition = "on"}
         else{this.overlay.dataset.condition = "off"}
@@ -271,29 +276,58 @@ function OverlayController(overlay){
 function Gamelogic(){
 
     game = GameController('player1')
-    menuState("start")
+    
+    mainboard = document.querySelector(".mainboard")
+    overlayClick = document.querySelector("#overlay")
     menu = document.querySelector(".overlay-text")
     menuheading = document.querySelector("#menuheading")
     menusubheading = document.querySelector("#menusubheading")
     button1 = document.querySelector("#button1")
     button2 = document.querySelector("#button2")
  
-    overlayController = OverlayController(game.overlay)
-    overlayController.createOverlay()
-    document.querySelector(".start").onclick = e => (this.overlayController.switchView((ROW*ROW*ROW*ROW)/2))
+    this.overlayController = OverlayController(game.overlay)
+    this.overlayController.createOverlay()
+    menuState("start")
+    document.querySelector(".start").onclick = e => {
+        game.initiate();
+        menuState("start");
+        if (overlayClick.dataset.condition=="on"){}
+        else{this.overlayController.switchView((ROW*ROW*ROW*ROW)/2)}
+    }
     
     game.initiate()
-    
-    function menuState(current_state){
+    mainboard.addEventListener('gameResult:won', (e) => {
+        menuState("won",who=e.detail.who,where=e.detail.where)
+    })
+    function menuState(current_state,who,where){
+
+            if(where)where.style.backgroundColor = ''
+            if(where)where.style.color = ""
+            menuheading.textContent = `Click anywhere to start the game...`
+            menusubheading.textContent = "Who goes first?"
+            button1.style.visibility='visible'
+            button2.style.visibility='visible'
         switch (current_state){
             case "start":
+                document.querySelector(".start").style.pointerEvents = "none"
+                menu.style.pointerEvents='all'              
                 menusubheading.textContent="Who goes first?"
-                button1.onclick = (() => {GameController('player1'); menusubheading.textContent='player 1 goes first'})
-                button2.onclick = (() => {GameController('player2'); menusubheading.textContent='player 2 goes first'})
-
-        
-
-}
+                button1.onclick = (() => {GameController('player1'); menusubheading.textContent='player 1 goes first';menu.style.pointerEvents='none';menuheading.style.opacity="1"})
+                button2.onclick = (() => {GameController('player2'); menusubheading.textContent='player 2 goes first';menu.style.pointerEvents='none';menuheading.style.opacity="1"})
+                overlayClick.onclick = (() => {overlayClick.style.pointerEvents='none';overlayClick.onclick=''})
+                break
+            case "won":
+                document.querySelector(".start").style.pointerEvents = "all"
+                overlayClick.style.pointerEvents = "all"
+                menu.style.pointerEvents='none'
+                where.style.backgroundColor = "white"
+                where.style.color = "red"
+                menuheading.textContent = `${who} has won the game`
+                menusubheading.textContent = "congratulations"
+                button1.style.visibility='hidden'
+                button2.style.visibility='hidden'
+                break
+        }
 
     }
 

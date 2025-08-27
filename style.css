@@ -75,7 +75,6 @@ button {
     inset: 0;  
     display: grid;
     z-index: 10;
-    pointer-events: "auto";
 }
 
 
@@ -90,7 +89,6 @@ button {
     position: absolute;
     inset: 0;
     z-index: 100;
-    pointer-events: none;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -130,6 +128,7 @@ button {
     will-change: filter, transform;
 }
 .overlay-text h1 {
+    opacity: 0;
     margin: 0;
     font-size: clamp(1.6rem, 4vw, 2.8rem);
     color: #7ffdfa;
@@ -142,7 +141,6 @@ button {
     opacity: 0.9;
 }
 .overlay-text > .buttons {
-    pointer-events: all;
     display: flex;
     gap: 1rem;
     z-index: 120;
