@@ -369,14 +369,13 @@ Gamelogic()
 const turb = document.getElementById('turb')
 const disp = document.getElementById('disp')
 
-// subtle pulsing distortion using anime's loop
+
 anime({
   duration: 3600,
   easing: 'easeInOutSine',
   direction: 'alternate',
   loop: true,
   update: (anim) => {
-    // anim.progress or currentTime -> compute smooth values
     const t = 0.012 + 0.028 * Math.sin((anim.currentTime / anim.duration) * Math.PI * 2)
     turb.setAttribute('baseFrequency', `${t.toFixed(4)} ${ (t*1.8).toFixed(4) }`)
 
